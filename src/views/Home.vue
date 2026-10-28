@@ -1,11 +1,11 @@
 <!-- =============================================================================
-  Home.vue - 公开首页
-  展示所有已发布的文章列表（无需登录）
+  Home.vue - Public homepage
+  Display published posts without requiring login
   ============================================================================= -->
 
 <template>
   <div class="home-page">
-    <!-- 页面头部 -->
+    <!-- Page header -->
     <header class="hero-section">
       <div class="hero-content">
         <h1 class="hero-title">📝 My blog</h1>
@@ -13,14 +13,14 @@
       </div>
     </header>
 
-    <!-- 主内容区域 -->
+    <!-- Main content area -->
     <div class="container">
-      <!-- 加载状态 -->
+      <!-- Loading state -->
       <div v-if="loading" class="loading">
         <div class="spinner"></div>
       </div>
 
-      <!-- 文章列表 -->
+      <!-- Post list -->
       <div v-else-if="posts.length > 0" class="articles-grid">
         <article v-for="post in posts" :key="post.id" class="article-card">
           <div class="article-header">
@@ -50,13 +50,13 @@
         </article>
       </div>
 
-      <!-- 空状态 -->
+      <!-- Empty state -->
       <div v-else class="empty-state">
         <p>📭 No posts yet</p>
         <p class="empty-hint">Writer can log in to publish post.</p>
       </div>
 
-      <!-- 分页 -->
+      <!-- Pagination -->
       <div v-if="pagination.totalPages > 1" class="pagination">
         <button
           @click="changePage(pagination.page - 1)"
@@ -76,7 +76,7 @@
       </div>
     </div>
 
-    <!-- 页脚 -->
+    <!-- Footer -->
     <footer class="footer">
       <p>© 2026 My Blog | Built with love by lover</p>
       <p>
@@ -88,36 +88,35 @@
 
 <script setup>
 /**
- * 公开首页组件
- * 功能：
- * 1. 显示所有已发布的文章
- * 2. 无需登录即可访问
- * 3. 支持分页浏览
+ * Public homepage component
+ * Features:
+ * 1. Display published posts
+ * 2. Allow access without logging in
+ * 3. Support pagination
  */
-
 import { ref, onMounted } from 'vue'
 import { getPosts } from '../api'
 
 // ---------------------------------------------------------------------------
-// 响应式数据
+// Reactive state
 // ---------------------------------------------------------------------------
 
-/** 文章列表 */
+/** Post list */
 const posts = ref([])
 
-/** 加载状态 */
+/** Loading state */
 const loading = ref(false)
 
-/** 分页信息 */
+/** Pagination data */
 const pagination = ref({
   page: 1,
   limit: 9,
   total: 0,
   totalPages: 0
 })
-
+  
 // ---------------------------------------------------------------------------
-// 生命周期钩子
+// Lifecycle hooks
 // ---------------------------------------------------------------------------
 
 onMounted(async () => {
@@ -125,11 +124,11 @@ onMounted(async () => {
 })
 
 // ---------------------------------------------------------------------------
-// 数据加载函数
+// Data loading functions
 // ---------------------------------------------------------------------------
 
 /**
- * 加载已发布的文章列表
+ * Load published posts
  */
 async function loadPosts() {
   loading.value = true
@@ -138,7 +137,7 @@ async function loadPosts() {
     const response = await getPosts({
       page: pagination.value.page,
       limit: pagination.value.limit,
-      status: 'published'  // 只获取已发布的文章
+      status: 'published' 
     })
 
     if (response.success) {
@@ -157,26 +156,26 @@ async function loadPosts() {
 }
 
 // ---------------------------------------------------------------------------
-// 操作函数
+// Action handlers
 // ---------------------------------------------------------------------------
 
 /**
- * 切换页码
+ * Change the current page
  */
 function changePage(page) {
   if (page < 1 || page > pagination.value.totalPages) return
   pagination.value.page = page
   loadPosts()
-  // 滚动到顶部
+  // Scroll to the top
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 // ---------------------------------------------------------------------------
-// 工具函数
+// Utility functions
 // ---------------------------------------------------------------------------
 
 /**
- * 格式化日期
+ * Format date
  */
 function formatDate(dateString) {
   const date = new Date(dateString)
@@ -189,7 +188,7 @@ function formatDate(dateString) {
 </script>
 
 <style scoped>
-/* 页面头部英雄区域 */
+/* Page header and hero section */
 .hero-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -209,14 +208,14 @@ function formatDate(dateString) {
   opacity: 0.9;
 }
 
-/* 容器 */
+/* container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* 文章网格布局 */
+/* Post grid */
 .articles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -224,7 +223,7 @@ function formatDate(dateString) {
   margin-bottom: 40px;
 }
 
-/* 文章卡片 */
+/* Post card */
 .article-card {
   background-color: white;
   border-radius: 12px;
@@ -300,7 +299,7 @@ function formatDate(dateString) {
   color: var(--primary-dark);
 }
 
-/* 空状态 */
+/* Empty state */
 .empty-state {
   text-align: center;
   padding: 80px 20px;
@@ -319,7 +318,7 @@ function formatDate(dateString) {
   color: var(--text-light);
 }
 
-/* 页脚 */
+/* Footer */
 .footer {
   text-align: center;
   padding: 40px 20px;
@@ -339,7 +338,7 @@ function formatDate(dateString) {
   color: var(--primary-dark);
 }
 
-/* 响应式设计 */
+/* Responsive layout */
 @media (max-width: 768px) {
   .hero-title {
     font-size: 32px;
