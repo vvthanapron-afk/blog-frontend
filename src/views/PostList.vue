@@ -1,6 +1,6 @@
 <!-- =============================================================================
-  PostList.vue - 文章列表页面
-  显示所有文章，支持搜索、筛选、删除操作
+  PostList.vue - Post list page
+  Display posts with status filtering, editing, and deletion
   ============================================================================= -->
 
 <template>
@@ -12,7 +12,7 @@
       </router-link>
     </div>
 
-    <!-- 筛选栏 -->
+    <!-- Status filter -->
     <div class="filter-bar">
       <select v-model="statusFilter" @change="loadPosts" class="form-input filter-select">
         <option value="">All Posts</option>
@@ -21,12 +21,12 @@
       </select>
     </div>
 
-    <!-- 加载状态 -->
+    <!-- Loading state -->
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
     </div>
 
-    <!-- 文章列表 -->
+    <!-- Post list -->
     <div v-else-if="posts.length > 0" class="posts-grid">
       <div v-for="post in posts" :key="post.id" class="post-card">
         <div class="post-card-header">
@@ -38,7 +38,7 @@
 
         <h2 class="post-card-title">{{ post.title }}</h2>
 
-        <p class="post-card-summary">{{ post.summary || 'No Summary available' }}</p>
+        <p class="post-card-summary">{{ post.summary || 'No summary available' }}</p>
 
         <div class="post-card-footer">
           <div class="post-meta">
@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    <!-- 空状态 -->
+    <!-- Empty state -->
     <div v-else class="empty-state">
       <p>📭 No posts yet</p>
       <router-link to="/posts/new" class="btn btn-primary">
@@ -65,7 +65,7 @@
       </router-link>
     </div>
 
-    <!-- 分页 -->
+    <!-- Pagination -->
     <div v-if="pagination.totalPages > 1" class="pagination">
       <button
         @click="changePage(pagination.page - 1)"
@@ -84,13 +84,13 @@
       </button>
     </div>
 
-    <!-- 删除确认对话框 -->
+    <!-- Delete confirmation dialog -->
     <div v-if="showDeleteDialog" class="modal-overlay" @click="cancelDelete">
       <div class="modal-content" @click.stop>
         <h3>Confirm Delete</h3>
-        <p>Are you sure you want to delete this post? This action cannot be undone。</p>
+        <p>Are you sure you want to delete this post? This action cannot be undone.</p>
         <div class="modal-actions">
-          <button @click="cancelDelete" class="btn btn-secondary">Canel</button>
+          <button @click="cancelDelete" class="btn btn-secondary">Cancel</button>
           <button @click="deletePost" class="btn btn-danger">Confirm Delete</button>
         </div>
       </div>
@@ -100,12 +100,12 @@
 
 <script setup>
 /**
- * 文章列表页面组件
- * 功能：
- * 1. 显示所有文章列表
- * 2. 按状态筛选文章
- * 3. 分页浏览
- * 4. 编辑和删除文章
+ * Post list component
+ * Features:
+ * 1. Display the post list
+ * 2. Filter posts by status
+ * 3. Support pagination
+ * 4. Edit and delete posts
  */
 
 import { ref, onMounted } from 'vue'
@@ -115,19 +115,19 @@ import { getPosts, deletePost as deletePostApi } from '../api'
 const router = useRouter()
 
 // ---------------------------------------------------------------------------
-// 响应式数据
+// Reactive state
 // ---------------------------------------------------------------------------
 
-/** 文章列表 */
+/** Post list */
 const posts = ref([])
 
-/** 加载状态 */
+/** Loading state */
 const loading = ref(false)
 
-/** 状态筛选 */
+/** Status filter */
 const statusFilter = ref('')
 
-/** 分页信息 */
+/** Pagination data */
 const pagination = ref({
   page: 1,
   limit: 9,
@@ -135,14 +135,14 @@ const pagination = ref({
   totalPages: 0
 })
 
-/** 删除确认对话框显示状态 */
+/** Whether the delete confirmation dialog is visible */
 const showDeleteDialog = ref(false)
 
-/** 待删除的文章 ID */
+/** ID of the post selected for deletion */
 const postToDelete = ref(null)
 
 // ---------------------------------------------------------------------------
-// 生命周期钩子
+// Lifecycle hooks
 // ---------------------------------------------------------------------------
 
 onMounted(() => {
@@ -150,12 +150,12 @@ onMounted(() => {
 })
 
 // ---------------------------------------------------------------------------
-// 数据加载函数
+// Data loading functions
 // ---------------------------------------------------------------------------
 
 /**
- * 加载文章列表
- * 根据筛选条件和分页参数获取文章
+ * Load the post list
+ * Fetch posts using the current filter and pagination settings
  */
 async function loadPosts() {
   loading.value = true
@@ -166,7 +166,7 @@ async function loadPosts() {
       limit: pagination.value.limit
     }
 
-    // 如果有状态筛选，添加到参数中
+    // Add the status filter to the query parameters when selected
     if (statusFilter.value) {
       params.status = statusFilter.value
     }
@@ -190,20 +190,20 @@ async function loadPosts() {
 }
 
 // ---------------------------------------------------------------------------
-// 操作函数
+// Action handlers
 // ---------------------------------------------------------------------------
 
 /**
- * 编辑文章
- * 跳转到文章编辑页面
+ * Edit a post
+ * Navigate to the post editor
  */
 function editPost(postId) {
   router.push(`/posts/edit/${postId}`)
 }
 
 /**
- * 确认删除文章
- * 显示删除确认对话框
+ * Ask for confirmation before deleting a post
+ * Show the delete confirmation dialog
  */
 function confirmDelete(postId) {
   postToDelete.value = postId
@@ -211,7 +211,7 @@ function confirmDelete(postId) {
 }
 
 /**
- * 取消删除
+ * Cancel deletion
  */
 function cancelDelete() {
   showDeleteDialog.value = false
@@ -219,8 +219,8 @@ function cancelDelete() {
 }
 
 /**
- * 执行删除文章
- * 调用 API 删除文章并刷新列表
+ * Delete the selected post
+ * Call the delete API and refresh the list
  */
 async function deletePost() {
   if (!postToDelete.value) return
@@ -229,11 +229,11 @@ async function deletePost() {
     const response = await deletePostApi(postToDelete.value)
 
     if (response.success) {
-      alert('Post deleted sucessfully')
-      // 重新加载文章列表
+      alert('Post deleted successfully')
+      // Reload the post list
       await loadPosts()
     } else {
-      alert(response.message || 'Failed to delete posts')
+      alert(response.message || 'Failed to delete the post')
     }
   } catch (error) {
     console.error('Failed to delete post:', error)
@@ -244,7 +244,7 @@ async function deletePost() {
 }
 
 /**
- * 切换页码
+ * Change the current page
  */
 function changePage(page) {
   if (page < 1 || page > pagination.value.totalPages) return
@@ -253,15 +253,15 @@ function changePage(page) {
 }
 
 // ---------------------------------------------------------------------------
-// 工具函数
+// Utility functions
 // ---------------------------------------------------------------------------
 
 /**
- * 格式化日期
+ * Format a date
  */
 function formatDate(dateString) {
   const date = new Date(dateString)
-  return date.toLocaleDateString('zh-CN', {
+  return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -270,7 +270,7 @@ function formatDate(dateString) {
 </script>
 
 <style scoped>
-/* 页面头部 */
+/* Page header */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -284,7 +284,7 @@ function formatDate(dateString) {
   color: var(--text-primary);
 }
 
-/* 筛选栏 */
+/* Status filter */
 .filter-bar {
   margin-bottom: 24px;
 }
@@ -293,7 +293,7 @@ function formatDate(dateString) {
   max-width: 200px;
 }
 
-/* 文章网格布局 */
+/* Post grid */
 .posts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -301,7 +301,7 @@ function formatDate(dateString) {
   margin-bottom: 24px;
 }
 
-/* 文章卡片 */
+/* Post card */
 .post-card {
   background-color: white;
   border-radius: 12px;
@@ -370,7 +370,7 @@ function formatDate(dateString) {
   font-size: 13px;
 }
 
-/* 空状态 */
+/* Empty state */
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -384,14 +384,14 @@ function formatDate(dateString) {
   margin-bottom: 20px;
 }
 
-/* 分页 */
+/* Pagination */
 .page-info {
   padding: 8px 16px;
   color: var(--text-secondary);
   font-size: 14px;
 }
 
-/* 模态对话框 */
+/* Modal dialog */
 .modal-overlay {
   position: fixed;
   top: 0;
