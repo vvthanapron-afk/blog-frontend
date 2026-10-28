@@ -1,6 +1,6 @@
 <!-- =============================================================================
-  PostEditor.vue - 文章编辑器页面
-  用于创建和编辑文章，支持 Markdown 格式
+  PostEditor.vue - Post editor page
+  Create and edit posts with Markdown support
   ============================================================================= -->
 
 <template>
@@ -17,17 +17,17 @@
       </div>
     </div>
 
-    <!-- 加载状态 -->
+    <!-- Loading state -->
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
     </div>
 
-    <!-- 编辑表单 -->
+    <!-- Editor form -->
     <div v-else class="editor-container">
-      <!-- 基本信息区域 -->
+      <!-- Basic post information -->
       <div class="card">
         <div class="form-group">
-          <label for="title">Post title </label>
+          <label for="title">Post title</label>
           <input
             id="title"
             v-model="form.title"
@@ -45,7 +45,7 @@
             v-model="form.summary"
             type="text"
             class="form-input"
-            placeholder="Enter summary（Optional, shown in post lists）"
+            placeholder="Enter a summary (optional, shown in post lists)"
           />
         </div>
 
@@ -56,7 +56,7 @@
             v-model="form.tagsInput"
             type="text"
             class="form-input"
-            placeholder="Separate tags with commas (e.g. life, emotional, Secret)"
+            placeholder="Separate tags with commas (e.g. life, emotions, stories)"
           />
           <div class="tags-preview" v-if="tags.length > 0">
             <span v-for="tag in tags" :key="tag" class="tag">{{ tag }}</span>
@@ -64,7 +64,7 @@
         </div>
       </div>
 
-      <!-- 内容编辑区域 -->
+      <!-- Content editor -->
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">Post content</h2>
@@ -86,24 +86,24 @@
           </div>
         </div>
 
-        <!-- 编辑模式 -->
+        <!-- Edit mode -->
         <div v-if="editorTab === 'edit'" class="form-group">
           <textarea
             v-model="form.content"
             class="form-input form-textarea"
-            placeholder="Markdown supported..."
+            placeholder="Write your post in Markdown..."
             rows="20"
           ></textarea>
         </div>
 
-        <!-- 预览模式 -->
+        <!-- Preview mode -->
         <div v-else class="preview-content card">
           <div v-html="renderedContent" class="markdown-body"></div>
         </div>
       </div>
     </div>
 
-    <!-- 消息提示 -->
+    <!-- Status messages -->
     <div v-if="message" class="message" :class="messageType">
       {{ message }}
     </div>
@@ -112,13 +112,13 @@
 
 <script setup>
 /**
- * 文章编辑器组件
- * 功能：
- * 1. 创建新文章
- * 2. 编辑现有文章
- * 3. 支持 Markdown 格式
- * 4. 实时预览
- * 5. 保存为草稿或直接发布
+ * Post editor component
+ * Features:
+ * 1. Create a new post
+ * 2. Edit an existing post
+ * 3. Support Markdown content
+ * 4. Preview Markdown content
+ * 5. Save a draft or publish the post
  */
 
 import { ref, computed, onMounted } from 'vue'
@@ -130,26 +130,26 @@ const router = useRouter()
 const route = useRoute()
 
 // ---------------------------------------------------------------------------
-// 响应式数据
+// Reactive state
 // ---------------------------------------------------------------------------
 
-/** 是否为编辑模式 */
+/** Whether the editor is updating an existing post */
 const isEditing = computed(() => !!route.params.id)
 
-/** 加载状态 */
+/** Loading state */
 const loading = ref(false)
 
-/** 保存状态 */
+/** Saving state */
 const saving = ref(false)
 
-/** 编辑器标签页（编辑/预览） */
+/** Editor tab: edit or preview */
 const editorTab = ref('edit')
 
-/** 消息提示 */
+/** Status messages */
 const message = ref('')
 const messageType = ref('message-success')
 
-/** 表单数据 */
+/** Form data */
 const form = ref({
   title: '',
   content: '',
@@ -158,11 +158,11 @@ const form = ref({
 })
 
 // ---------------------------------------------------------------------------
-// 计算属性
+// Computed properties
 // ---------------------------------------------------------------------------
 
 /**
- * 解析标签输入字符串为数组
+ * Convert the comma-separated tag input to an array
  */
 const tags = computed(() => {
   if (!form.value.tagsInput) return []
@@ -173,7 +173,7 @@ const tags = computed(() => {
 })
 
 /**
- * 渲染 Markdown 内容为 HTML
+ * Render Markdown content as HTML
  */
 const renderedContent = computed(() => {
   if (!form.value.content) return '<p>No content yet.</p>'
@@ -181,22 +181,22 @@ const renderedContent = computed(() => {
 })
 
 // ---------------------------------------------------------------------------
-// 生命周期钩子
+// Lifecycle hooks
 // ---------------------------------------------------------------------------
 
 onMounted(async () => {
-  // 如果是编辑模式，加载文章数据
+  // Load the existing post when editing
   if (isEditing.value) {
     await loadPost()
   }
 })
 
 // ---------------------------------------------------------------------------
-// 数据加载函数
+// Data loading functions
 // ---------------------------------------------------------------------------
 
 /**
- * 加载文章数据（编辑模式）
+ * Load post data for editing
  */
 async function loadPost() {
   loading.value = true
@@ -224,31 +224,31 @@ async function loadPost() {
 }
 
 // ---------------------------------------------------------------------------
-// 操作函数
+// Action handlers
 // ---------------------------------------------------------------------------
 
 /**
- * 保存为草稿
+ * Save as a draft
  */
 async function saveAsDraft() {
   await savePost('draft')
 }
 
 /**
- * 发布文章
+ * Publish the post
  */
 async function publish() {
   await savePost('published')
 }
 
 /**
- * 保存文章
- * @param {string} status - 文章状态（draft/published）
+ * Save the post
+ * @param {string} status - Post status: draft or published
  */
 async function savePost(status) {
-  // 验证必填字段
+  // Validate required fields
   if (!form.value.title || !form.value.content) {
-    showMessage('Tiltle and content are required', 'message-error')
+    showMessage('Title and content are required', 'message-error')
     return
   }
 
@@ -265,20 +265,20 @@ async function savePost(status) {
 
     let response
     if (isEditing.value) {
-      // 更新文章
+      // Update a post
       response = await updatePost(route.params.id, postData)
     } else {
-      // 创建文章
+      // Create a post
       response = await createPost(postData)
     }
 
     if (response.success) {
       showMessage(
-        isEditing.value ? 'Post update suceessfully' : 'Post created successfully',
+        isEditing.value ? 'Post updated successfully' : 'Post created successfully',
         'message-success'
       )
 
-      // 延迟跳转到文章列表
+      // Navigate to the post list after a short delay
       setTimeout(() => {
         router.push('/posts')
       }, 1000)
@@ -287,22 +287,22 @@ async function savePost(status) {
     }
   } catch (error) {
     console.error('Failed to save post:', error)
-    showMessage('Faile to save post. Please try again later', 'message-error')
+    showMessage('Failed to save the post. Please try again later.', 'message-error')
   } finally {
     saving.value = false
   }
 }
 
 /**
- * 显示消息提示
- * @param {string} msg - 消息内容
- * @param {string} type - 消息类型
+ * Display a status message
+ * @param {string} msg - Message text
+ * @param {string} type - Message CSS class
  */
 function showMessage(msg, type = 'message-success') {
   message.value = msg
   messageType.value = type
 
-  // 3秒后自动清除消息
+  // Clear the message after three seconds
   setTimeout(() => {
     message.value = ''
   }, 3000)
@@ -310,7 +310,7 @@ function showMessage(msg, type = 'message-success') {
 </script>
 
 <style scoped>
-/* 页面头部 */
+/* Page header */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -329,14 +329,14 @@ function showMessage(msg, type = 'message-success') {
   gap: 12px;
 }
 
-/* 编辑器容器 */
+/* Editor container */
 .editor-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* 表单组 */
+/* Form group */
 .form-group {
   margin-bottom: 20px;
 }
@@ -348,7 +348,7 @@ function showMessage(msg, type = 'message-success') {
   color: var(--text-primary);
 }
 
-/* 标签预览 */
+/* Tag preview */
 .tags-preview {
   margin-top: 8px;
   display: flex;
@@ -356,7 +356,7 @@ function showMessage(msg, type = 'message-success') {
   gap: 8px;
 }
 
-/* 编辑器标签页 */
+/* Editor tabs */
 .editor-tabs {
   display: flex;
   gap: 8px;
@@ -381,7 +381,7 @@ function showMessage(msg, type = 'message-success') {
   border-color: var(--primary-color);
 }
 
-/* 文本域 */
+/* Text area */
 .form-textarea {
   min-height: 400px;
   font-family: 'Courier New', monospace;
@@ -389,13 +389,13 @@ function showMessage(msg, type = 'message-success') {
   line-height: 1.6;
 }
 
-/* 预览内容 */
+/* Preview content */
 .preview-content {
   min-height: 400px;
   background-color: var(--bg-secondary);
 }
 
-/* Markdown 渲染样式 */
+/* Markdown styles */
 .markdown-body {
   line-height: 1.8;
 }
@@ -432,7 +432,7 @@ function showMessage(msg, type = 'message-success') {
   margin-bottom: 16px;
 }
 
-/* 消息提示 */
+/* Status messages */
 .message {
   position: fixed;
   top: 20px;
