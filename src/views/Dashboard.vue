@@ -1,15 +1,15 @@
 <!-- =============================================================================
-  Dashboard.vue - 仪表盘页面
-  显示系统概览信息和统计数据
+  Dashboard.vue - Dashboard page
+  Display an overview of the system and post statistics
   ============================================================================= -->
 
 <template>
   <div class="dashboard">
     <h1 class="page-title">Dashboard</h1>
 
-    <!-- 统计卡片区域 -->
+    <!-- Statistics cards section -->
     <div class="stats-grid">
-      <!-- 文章总数卡片 -->
+      <!-- Total posts card -->
       <div class="stat-card">
         <div class="stat-icon">📄</div>
         <div class="stat-content">
@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <!-- 已发布文章卡片 -->
+      <!-- Published posts card -->
       <div class="stat-card">
         <div class="stat-icon">✅</div>
         <div class="stat-content">
@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <!-- 草稿文章卡片 -->
+      <!-- Draft posts card -->
       <div class="stat-card">
         <div class="stat-icon">📝</div>
         <div class="stat-content">
@@ -36,7 +36,7 @@
         </div>
       </div>
 
-      <!-- 总浏览次数卡片 -->
+      <!-- Total views card -->
       <div class="stat-card">
         <div class="stat-icon">👁️</div>
         <div class="stat-content">
@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <!-- 快捷操作区域 -->
+    <!-- Quick actions section -->
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">Recent Post</h2>
@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <!-- 最近文章区域 -->
+    <!-- Recent posts section -->
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">Recent Post</h2>
@@ -92,21 +92,21 @@
 
 <script setup>
 /**
- * 仪表盘页面组件
- * 功能：
- * 1. 显示文章统计数据
- * 2. 提供快捷操作入口
- * 3. 展示最近发布的文章
+ * Dashboard component
+ * Features:
+ * 1. Display post statistics
+ * 2. Provide quick actions
+ * 3. Display recent posts
  */
-
+  
 import { ref, onMounted } from 'vue'
 import { getPosts } from '../api'
 
 // ---------------------------------------------------------------------------
-// 响应式数据
+// Reactive state
 // ---------------------------------------------------------------------------
 
-/** 统计数据 */
+/** Statistics */
 const stats = ref({
   totalPosts: 0,
   publishedPosts: 0,
@@ -114,37 +114,37 @@ const stats = ref({
   totalViews: 0
 })
 
-/** 最近文章列表 */
+/** Recent posts */
 const recentPosts = ref([])
 
 // ---------------------------------------------------------------------------
-// 生命周期钩子
+// Lifecycle hooks
 // ---------------------------------------------------------------------------
 
 /**
- * 组件挂载后加载数据
+ * Load data after the component is mounted
  */
 onMounted(async () => {
   await loadDashboardData()
 })
 
 // ---------------------------------------------------------------------------
-// 数据加载函数
+// Data loading functions
 // ---------------------------------------------------------------------------
 
 /**
- * 加载仪表盘数据
- * 获取所有文章并计算统计数据
+ * Load dashboard data
+ * Load posts and calculate dashboard statistics
  */
 async function loadDashboardData() {
   try {
-    // 获取所有文章（不限制数量）
+    // Fetch posts for the dashboard statistics
     const response = await getPosts({ limit: 1000 })
 
     if (response.success) {
       const posts = response.data.posts
 
-      // 计算统计数据
+      // Calculate statistics
       stats.value = {
         totalPosts: posts.length,
         publishedPosts: posts.filter(p => p.status === 'published').length,
@@ -152,7 +152,7 @@ async function loadDashboardData() {
         totalViews: posts.reduce((sum, p) => sum + p.view_count, 0)
       }
 
-      // 获取最近 5 篇文章
+      // Get the 5 most recent posts
       recentPosts.value = posts.slice(0, 5)
     }
   } catch (error) {
@@ -161,13 +161,13 @@ async function loadDashboardData() {
 }
 
 // ---------------------------------------------------------------------------
-// 工具函数
+// Utility functions
 // ---------------------------------------------------------------------------
 
 /**
- * 格式化日期
- * @param {string} dateString - ISO 格式的日期字符串
- * @returns {string} 格式化后的日期
+ * Format a date
+ * @param {string} dateString - Date string in ISO format
+ * @returns {string} Formatted date
  */
 function formatDate(dateString) {
   const date = new Date(dateString)
@@ -180,7 +180,7 @@ function formatDate(dateString) {
 </script>
 
 <style scoped>
-/* 页面标题 */
+/* Page title */
 .page-title {
   font-size: 28px;
   font-weight: 700;
@@ -188,7 +188,7 @@ function formatDate(dateString) {
   color: var(--text-primary);
 }
 
-/* 统计卡片网格布局 */
+/* Statistics card grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -196,7 +196,7 @@ function formatDate(dateString) {
   margin-bottom: 24px;
 }
 
-/* 统计卡片 */
+/* Statistics card */
 .stat-card {
   display: flex;
   align-items: center;
@@ -234,7 +234,7 @@ function formatDate(dateString) {
   color: var(--text-secondary);
 }
 
-/* 快捷操作 */
+/* Quick actions */
 .quick-actions {
   display: flex;
   gap: 16px;
@@ -261,13 +261,13 @@ function formatDate(dateString) {
   font-size: 20px;
 }
 
-/* 查看全部链接 */
+/* View all link */
 .view-all {
   font-size: 14px;
   color: var(--primary-color);
 }
 
-/* 最近文章列表 */
+/* Recent posts */
 .recent-posts {
   display: flex;
   flex-direction: column;
@@ -306,7 +306,7 @@ function formatDate(dateString) {
   align-items: center;
 }
 
-/* 空状态 */
+/* Empty state */
 .empty-state {
   text-align: center;
   padding: 40px;
