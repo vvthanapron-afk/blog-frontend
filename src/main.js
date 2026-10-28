@@ -1,6 +1,6 @@
 // =============================================================================
-// Vue 应用主入口文件 
-// 创建并挂载 Vue 应用实例
+// Main entry point for the Vue application 
+// Create and mount the Vue application
 // =============================================================================
 
 import { createApp } from 'vue'
@@ -8,18 +8,18 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-// 导入全局样式
+// Import global styles
 import './assets/style.css'
 
-// 创建 Vue 应用实例
+// Create the Vue application
 const app = createApp(App)
 
-// 创建 Pinia 状态管理实例
+// Create the Pinia instance
 const pinia = createPinia()
 
-// 注册插件
-app.use(pinia)      // 使用 Pinia 进行状态管理
-app.use(router)     // 使用 Vue Router 进行路由管理
+// Register plugins
+app.use(pinia)      // Use Pinia for state management
+app.use(router)     // Use Vue Router for navigation
 
-// 挂载应用到 DOM
+// Mount the application to the DOM
 app.mount('#app')
