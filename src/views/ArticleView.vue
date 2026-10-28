@@ -1,25 +1,25 @@
 <!-- =============================================================================
-  ArticleView.vue - 文章详情页
-  展示单篇文章的完整内容（无需登录）
+  ArticleView.vue - Post details page
+  Display a complete post without requiring login
   ============================================================================= -->
 
 <template>
   <div class="article-page">
-    <!-- 加载状态 -->
+    <!-- Loading state -->
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
     </div>
 
-    <!-- 文章不存在 -->
+    <!-- Post not found -->
     <div v-else-if="!post" class="error-state">
       <h2>Post not found</h2>
       <p>This post may been deleted or may never have existed </p>
       <router-link to="/" class="btn btn-primary">Back to home </router-link>
     </div>
 
-    <!-- 文章内容 -->
+    <!-- Post content -->
     <div v-else class="article-container">
-      <!-- 文章头部 -->
+      <!-- Post header -->
       <header class="article-header">
         <div class="article-tags" v-if="post.tags && post.tags.length > 0">
           <span v-for="tag in post.tags" :key="tag.id" class="tag">
@@ -45,15 +45,15 @@
         </div>
       </header>
 
-      <!-- 文章摘要 -->
+      <!-- Post summary -->
       <div v-if="post.summary" class="article-summary">
         <p>{{ post.summary }}</p>
       </div>
 
-      <!-- 文章内容（Markdown 渲染） -->
+      <!-- Post content rendered from Markdown -->
       <article class="article-content markdown-body" v-html="renderedContent"></article>
 
-      <!-- 文章底部 -->
+      <!-- Post footer -->
       <footer class="article-footer">
         <div class="article-info">
           <p>Last updated on {{ formatDateTime(post.updated_at) }}</p>
@@ -71,12 +71,12 @@
 
 <script setup>
 /**
- * 文章详情页组件
- * 功能：
- * 1. 显示单篇文章的完整内容
- * 2. 支持 Markdown 渲染
- * 3. 无需登录即可访问
- * 4. 自动增加浏览次数
+ * Post details component
+ * Features:
+ * 1. Display the complete content of one post
+ * 2. Render Markdown content
+ * 3. Allow access without logging in
+ * 4. Increment the view count when the post is loaded
  */
 
 import { ref, computed, onMounted } from 'vue'
@@ -87,21 +87,21 @@ import { marked } from 'marked'
 const route = useRoute()
 
 // ---------------------------------------------------------------------------
-// 响应式数据
+// Reactive state
 // ---------------------------------------------------------------------------
 
-/** 文章数据 */
+/** Poat data */
 const post = ref(null)
 
-/** 加载状态 */
+/** Loading state */
 const loading = ref(false)
 
 // ---------------------------------------------------------------------------
-// 计算属性
+// Computed properties
 // ---------------------------------------------------------------------------
 
 /**
- * 渲染 Markdown 内容为 HTML
+ * Render Markdown content as HTML
  */
 const renderedContent = computed(() => {
   if (!post.value || !post.value.content) return ''
@@ -109,7 +109,7 @@ const renderedContent = computed(() => {
 })
 
 // ---------------------------------------------------------------------------
-// 生命周期钩子
+// Lifecycle hooks
 // ---------------------------------------------------------------------------
 
 onMounted(async () => {
@@ -117,11 +117,11 @@ onMounted(async () => {
 })
 
 // ---------------------------------------------------------------------------
-// 数据加载函数
+// Data loading functions
 // ---------------------------------------------------------------------------
 
 /**
- * 加载文章详情
+ * Load post details
  */
 async function loadArticle() {
   loading.value = true
@@ -144,11 +144,11 @@ async function loadArticle() {
 }
 
 // ---------------------------------------------------------------------------
-// 工具函数
+// Utility functions
 // ---------------------------------------------------------------------------
 
 /**
- * 格式化日期（仅日期）
+ * Format a date without a time
  */
 function formatDate(dateString) {
   const date = new Date(dateString)
@@ -160,11 +160,11 @@ function formatDate(dateString) {
 }
 
 /**
- * 格式化日期时间（包含时间）
+ * Format a date and time
  */
 function formatDateTime(dateString) {
   const date = new Date(dateString)
-  return date.toLocaleString('zh-CN', {
+  return date.toLocaleString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -175,14 +175,14 @@ function formatDateTime(dateString) {
 </script>
 
 <style scoped>
-/* 页面容器 */
+/* Page container */
 .article-page {
   min-height: 100vh;
   background-color: var(--bg-secondary);
   padding: 40px 20px;
 }
 
-/* 文章容器 */
+/* Post container */
 .article-container {
   max-width: 800px;
   margin: 0 auto;
@@ -192,7 +192,7 @@ function formatDateTime(dateString) {
   padding: 48px;
 }
 
-/* 文章头部 */
+/* Post header */
 .article-header {
   margin-bottom: 32px;
   padding-bottom: 24px;
@@ -232,7 +232,7 @@ function formatDateTime(dateString) {
   font-size: 16px;
 }
 
-/* 文章摘要 */
+/* Post summary */
 .article-summary {
   background-color: var(--bg-secondary);
   padding: 20px 24px;
@@ -248,14 +248,14 @@ function formatDateTime(dateString) {
   margin: 0;
 }
 
-/* 文章内容 */
+/* Post content */
 .article-content {
   font-size: 16px;
   line-height: 1.8;
   color: var(--text-primary);
 }
 
-/* Markdown 渲染样式 */
+/* Markdown styles */
 .markdown-body :deep(h1),
 .markdown-body :deep(h2),
 .markdown-body :deep(h3),
@@ -366,7 +366,7 @@ function formatDateTime(dateString) {
   font-weight: 600;
 }
 
-/* 文章底部 */
+/* Post footer */
 .article-footer {
   margin-top: 48px;
   padding-top: 24px;
@@ -386,7 +386,7 @@ function formatDateTime(dateString) {
   gap: 12px;
 }
 
-/* 错误状态 */
+/* Error state */
 .error-state {
   max-width: 600px;
   margin: 80px auto;
@@ -408,7 +408,7 @@ function formatDateTime(dateString) {
   margin-bottom: 24px;
 }
 
-/* 响应式设计 */
+/* Responsive layout */
 @media (max-width: 768px) {
   .article-container {
     padding: 24px;
