@@ -1,6 +1,6 @@
 <!-- =============================================================================
-  Login.vue - 登录页面
-  管理员登录表单，验证成功后跳转到仪表盘
+  Login.vue - Login page
+  Administrator login form; navigate to the dashboard after successful authentication
   ============================================================================= -->
 
 <template>
@@ -9,14 +9,14 @@
       <h1 class="login-title">📝 My Blog</h1>
       <p class="login-subtitle">Writer Login</p>
 
-      <!-- 错误消息提示 -->
+      <!-- Error message -->
       <div v-if="errorMessage" class="message message-error">
         {{ errorMessage }}
       </div>
 
-      <!-- 登录表单 -->
+      <!-- Login form -->
       <form @submit.prevent="handleLogin" class="login-form">
-        <!-- 用户名输入框 -->
+        <!-- Username input -->
         <div class="form-group">
           <label for="username">Username</label>
           <input
@@ -30,7 +30,7 @@
           />
         </div>
 
-        <!-- 密码输入框 -->
+        <!-- Password input -->
         <div class="form-group">
           <label for="password">Password</label>
           <input
@@ -38,20 +38,20 @@
             v-model="form.password"
             type="password"
             class="form-input"
-            placeholder="Enter your Password"
+            placeholder="Enter your password"
             required
             autocomplete="current-password"
           />
         </div>
 
-        <!-- 登录按钮 -->
+        <!-- Login button -->
         <button
           type="submit"
           class="btn btn-primary btn-block"
           :disabled="loading"
         >
           <span v-if="!loading">Log in</span>
-          <span v-else>logging in...</span>
+          <span v-else>Logging in...</span>
         </button>
       </form>
 
@@ -63,13 +63,13 @@
 
 <script setup>
 /**
- * 登录页面组件
- * 功能：
- * 1. 显示登录表单
- * 2. 验证用户输入
- * 3. 调用登录 API
- * 4. 保存认证信息到本地存储
- * 5. 跳转到目标页面
+ * Login page component
+ * Features:
+ * 1. Display the login form
+ * 2. Validate user input
+ * 3. Call the login API
+ * 4. Store authentication data in local storage
+ * 5. Navigate to the destination page
  */
 
 import { ref, reactive } from 'vue'
@@ -80,76 +80,76 @@ const router = useRouter()
 const route = useRoute()
 
 // ---------------------------------------------------------------------------
-// 响应式数据
+// Reactive state
 // ---------------------------------------------------------------------------
 
-/** 表单数据 */
+/** Form data */
 const form = reactive({
   username: '',
   password: ''
 })
 
-/** 加载状态 */
+/** Loading state */
 const loading = ref(false)
 
-/** 错误消息 */
+/** Error message */
 const errorMessage = ref('')
 
 // ---------------------------------------------------------------------------
-// 登录处理函数
+// Login handler
 // ---------------------------------------------------------------------------
 
 /**
- * 处理登录表单提交
- * 1. 验证输入
- * 2. 调用登录 API
- * 3. 保存 token 和用户信息
- * 4. 跳转到目标页面
+ * Handle login form submission
+ * 1. Validate the input
+ * 2. Call the login API
+ * 3. Store the token and user information
+ * 4. Navigate to the destination page
  */
 async function handleLogin() {
-  // 清除之前的错误消息
+  // Clear the previous error message
   errorMessage.value = ''
 
-  // 前端验证：检查输入是否为空
+  // Frontend validation: check for empty input
   if (!form.username || !form.password) {
-    errorMessage.value = 'Username & Password are required'
+    errorMessage.value = 'Username and password are required'
     return
   }
 
-  // 设置加载状态
+  // Set the loading state
   loading.value = true
 
   try {
-    // 调用登录 API
+    // Call the login API
     const response = await login(form.username, form.password)
 
     if (response.success) {
-      // 登录成功，保存 token 和用户信息到本地存储
+      // After a successful login, store the token and user information
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('user', JSON.stringify(response.data.user))
 
-      // 显示成功消息
+      // Clear any previous error message
       errorMessage.value = ''
 
-      // 跳转到目标页面（如果有）或仪表盘
+      // Navigate to the requested destination or the dashboard
       const redirectPath = route.query.redirect || '/dashboard'
       router.push(redirectPath)
     } else {
-      // 登录失败，显示错误消息
+      // Display an error message if login fails
       errorMessage.value = response.message || 'Login failed'
     }
   } catch (error) {
-    // 捕获异常，显示错误消息
-    errorMessage.value = error.response?.data?.message || '登录失败，请稍后重试'
+    // Catch request errors and display a message
+    errorMessage.value = error.response?.data?.message || 'Login failed. Please try again later.'
   } finally {
-    // 无论成功或失败，都重置加载状态
+    // Reset the loading state after the request completes
     loading.value = false
   }
 }
 </script>
 
 <style scoped>
-/* 登录页面容器：全屏居中布局 */
+/* Center the login page content */
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -159,7 +159,7 @@ async function handleLogin() {
   padding: 20px;
 }
 
-/* 登录框样式 */
+/* Login box styles */
 .login-box {
   width: 100%;
   max-width: 400px;
@@ -169,7 +169,7 @@ async function handleLogin() {
   padding: 40px;
 }
 
-/* 登录标题 */
+/* Login title */
 .login-title {
   text-align: center;
   font-size: 28px;
@@ -178,14 +178,14 @@ async function handleLogin() {
   margin-bottom: 8px;
 }
 
-/* 登录副标题 */
+/* Login subtitle */
 .login-subtitle {
   text-align: center;
   color: var(--text-secondary);
   margin-bottom: 32px;
 }
 
-/* 表单组 */
+/* Form group */
 .form-group {
   margin-bottom: 20px;
 }
@@ -197,7 +197,7 @@ async function handleLogin() {
   color: var(--text-primary);
 }
 
-/* 全宽按钮 */
+/* Full-width button */
 .btn-block {
   width: 100%;
   padding: 12px;
@@ -205,7 +205,7 @@ async function handleLogin() {
   margin-top: 8px;
 }
 
-/* 默认账号提示 */
+/* Legacy login notice styles */
 .default-account {
   margin-top: 24px;
   padding: 16px;
