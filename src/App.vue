@@ -1,11 +1,11 @@
 <!-- =============================================================================
-  App.vue - 应用根组件
-  包含导航栏和路由视图
+  App.vue - Root application component
+  Contains the navigation bar and router view
   ============================================================================= -->
 
 <template>
   <div id="app">
-    <!-- 导航栏：仅在登录状态且非公开页面时显示 -->
+    <!-- Navigation bar: shown on private pages when a token is present -->
     <nav class="navbar" v-if="isLoggedIn && !isPublicPage">
       <div class="navbar-brand">
         <router-link to="/dashboard">📝 Blog Manager</router-link>
@@ -15,11 +15,11 @@
         <router-link to="/posts" class="nav-link">Posts</router-link>
         <router-link to="/" class="nav-link">View Blog</router-link>
         <span class="username">{{ username }}</span>
-        <button @click="logout" class="btn btn-secondary">Log <output></output></button>
+        <button @click="logout" class="btn btn-secondary">Log out</button>
       </div>
     </nav>
 
-    <!-- 路由视图：显示当前路由对应的组件 -->
+    <!-- Router view: render the component for the current route -->
     <main class="main-content" :class="{ 'public-page': isPublicPage }">
       <router-view />
     </main>
@@ -28,11 +28,11 @@
 
 <script setup>
 /**
- * 应用根组件
- * 负责：
- * 1. 显示全局导航栏
- * 2. 管理用户登录状态
- * 3. 提供路由视图容器
+ * Root application component
+ * Responsibilities:
+ * 1. Display the main navigation bar
+ * 2. Read the user's login state
+ * 3. Provide a container for routed views
  */
 
 import { computed } from 'vue'
@@ -42,24 +42,24 @@ const router = useRouter()
 const route = useRoute()
 
 /**
- * 计算属性：检查用户是否已登录
- * 通过检查本地存储中是否存在 token 来判断
+ * Computed property: check whether the user is logged in
+ * Check whether a token exists in local storage
  */
 const isLoggedIn = computed(() => {
   return !!localStorage.getItem('token')
 })
 
 /**
- * 计算属性：检查当前是否为公开页面
- * 公开页面包括：首页、文章详情页
+ * Computed property: check whether the current page is public
+ * Public pages include the homepage and post details
  */
 const isPublicPage = computed(() => {
   return route.meta.isPublic === true
 })
 
 /**
- * 计算属性：获取当前登录用户名
- * 从本地存储中解析用户信息
+ * Computed property: get the current username
+ * Parse the user information stored in local storage
  */
 const username = computed(() => {
   const userStr = localStorage.getItem('user')
@@ -75,21 +75,21 @@ const username = computed(() => {
 })
 
 /**
- * 退出登录函数
- * 清除本地存储的认证信息，跳转到登录页
+ * Logout handler
+ * Clear stored authentication data and redirect to the login page
  */
 function logout() {
-  // 清除本地存储
+  // Clear local storage
   localStorage.removeItem('token')
   localStorage.removeItem('user')
 
-  // 跳转到登录页
+  // Redirect to the login page
   router.push('/login')
 }
 </script>
 
 <style scoped>
-/* 导航链接样式 */
+/* Navigation link styles */
 .nav-link {
   padding: 8px 16px;
   border-radius: 4px;
@@ -105,21 +105,21 @@ function logout() {
   color: white;
 }
 
-/* 用户名显示 */
+/* Username display */
 .username {
   padding: 8px 16px;
   color: var(--text-secondary);
   font-weight: 500;
 }
 
-/* 主内容区域 */
+/* Main content area */
 .main-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
 }
 
-/* 公开页面：移除容器限制 */
+/* Public pages: remove the content width restriction */
 .main-content.public-page {
   max-width: none;
   padding: 0;
