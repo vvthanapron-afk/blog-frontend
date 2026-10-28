@@ -1,11 +1,11 @@
 // =============================================================================
-// Vue Router 路由配置
-// 定义应用的页面路由和导航守卫
+// Vue Router configuration
+// Define page routes and navigation guards
 // =============================================================================
 
 import { createRouter, createWebHistory } from 'vue-router'
 
-// 导入页面组件
+// Import page components
 import Home from '../views/Home.vue'
 import ArticleView from '../views/ArticleView.vue'
 import Login from '../views/Login.vue'
@@ -14,21 +14,21 @@ import PostList from '../views/PostList.vue'
 import PostEditor from '../views/PostEditor.vue'
 
 // ---------------------------------------------------------------------------
-// 路由配置数组
-// 每个路由对象包含：路径、组件、元信息（是否需要认证等）
+// Route configuration
+// Each route defines a path, component, and metadata such as authentication requirements
 // ---------------------------------------------------------------------------
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
-    meta: { requiresAuth: false, isPublic: true }  // 公开首页
+    meta: { requiresAuth: false, isPublic: true }  // Public homepage
   },
   {
     path: '/article/:id',
     name: 'ArticleView',
     component: ArticleView,
-    meta: { requiresAuth: false, isPublic: true }  // 公开文章详情
+    meta: { requiresAuth: false, isPublic: true }  // Public post details
   },
   {
     path: '/login',
@@ -63,38 +63,38 @@ const routes = [
 ]
 
 // ---------------------------------------------------------------------------
-// 创建路由实例
+// Create the router instance
 // ---------------------------------------------------------------------------
 const router = createRouter({
-  history: createWebHistory(),  // 使用 HTML5 History 模式
+  history: createWebHistory(),  // Use HTML5 history mode
   routes
 })
 
 // ---------------------------------------------------------------------------
-// 全局前置守卫
-// 在每次路由切换前执行，用于检查认证状态
+// Global navigation guard
+// Check authentication before each route change
 // ---------------------------------------------------------------------------
 router.beforeEach((to, from, next) => {
-  // 获取本地存储的 token
+  // Read the token from local storage
   const token = localStorage.getItem('token')
 
-  // 检查目标路由是否需要认证
+  // Check whether the destination route requires authentication
   if (to.meta.requiresAuth) {
-    // 需要认证但没有 token，跳转到登录页
+    // Redirect to login when authentication is required but no token is present
     if (!token) {
       next({
         path: '/login',
-        query: { redirect: to.fullPath }  // 保存目标路径，登录后跳转回去
+        query: { redirect: to.fullPath }  // Keep the destination path so login can redirect back to it
       })
     } else {
-      // 有 token，允许访问
+      // Allow access when a token is present
       next()
     }
   } else {
-    // 不需要认证，直接访问
+    // Allow direct access when authentication is not required
     next()
   }
 })
 
-// 导出路由实例
+// Export the router
 export default router
